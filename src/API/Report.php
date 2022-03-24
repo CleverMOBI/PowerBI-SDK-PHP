@@ -50,7 +50,7 @@ class Report
      */
     public function getReport($reportId, $groupId = null)
     {
-        $url = $this->getReportUrl($groupId);
+        $url = $this->getReportUrl($reportId, $groupId);
 
         $response = $this->client->request(Client::METHOD_GET, $url);
 
