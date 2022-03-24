@@ -12,7 +12,7 @@ class ReportTest extends \PHPUnit_Framework_TestCase
     {
         $responseMock = \Mockery::mock(Response::class);
         $clientMock = \Mockery::mock(Client::class);
-        $clientMock->shouldReceive('request')->once()->withArgs(['GET', Report::REPORT_URL])->andReturn($responseMock);
+        $clientMock->shouldReceive('request')->once()->withArgs(['GET', Report::REPORTS_URL])->andReturn($responseMock);
         $clientMock->shouldReceive('generateResponse')->once()->with($responseMock)->andReturn('final-response');
 
         $report = new Report($clientMock);
@@ -23,7 +23,7 @@ class ReportTest extends \PHPUnit_Framework_TestCase
 
     function testGetReportsWithGroup()
     {
-        $url = sprintf(Report::GROUP_REPORT_URL, '123');
+        $url = sprintf(Report::REPORTS_IN_GROUP_URL, '123');
         $responseMock = \Mockery::mock(Response::class);
         $clientMock = \Mockery::mock(Client::class);
         $clientMock->shouldReceive('request')->once()->withArgs(['GET', $url])->andReturn($responseMock);
@@ -51,7 +51,7 @@ class ReportTest extends \PHPUnit_Framework_TestCase
 
     function testGetPages()
     {
-        $url = sprintf(Report::PAGE_URL, '123');
+        $url = sprintf(Report::PAGES_URL, '123');
         $responseMock = \Mockery::mock(Response::class);
         $clientMock = \Mockery::mock(Client::class);
         $clientMock->shouldReceive('request')->once()->withArgs(['GET', $url])->andReturn($responseMock);
@@ -65,7 +65,7 @@ class ReportTest extends \PHPUnit_Framework_TestCase
 
     function testGetPagesWithGroups()
     {
-        $url = sprintf(Report::GROUP_PAGE_URL, '123', '456');
+        $url = sprintf(Report::PAGES_IN_GROUP_URL, '123', '456');
         $responseMock = \Mockery::mock(Response::class);
         $clientMock = \Mockery::mock(Client::class);
         $clientMock->shouldReceive('request')->once()->withArgs(['GET', $url])->andReturn($responseMock);

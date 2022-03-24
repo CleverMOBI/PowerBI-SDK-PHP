@@ -5,6 +5,7 @@ namespace Tngnt\PBI;
 use Tngnt\PBI\API\Dashboard;
 use Tngnt\PBI\API\Dataset;
 use Tngnt\PBI\API\Datasource;
+use Tngnt\PBI\API\Embed;
 use Tngnt\PBI\API\Gateway;
 use Tngnt\PBI\API\Group;
 use Tngnt\PBI\API\Import;
@@ -27,6 +28,7 @@ use Tngnt\PBI\API\Table;
  * @property \Tngnt\PBI\API\Datasource $datasource
  * @property \Tngnt\PBI\API\Gateway    $gateway
  * @property \Tngnt\PBI\API\Import     $import
+ * @property \Tngnt\PBI\API\Embed      $embed
  */
 class Client
 {
@@ -111,6 +113,13 @@ class Client
      * @var null|Import
      */
     private $import = null;
+
+    /**
+     * The embed API class
+     *
+     * @var null|Embed
+     */
+    private $embed = null;
 
     /**
      * Client constructor.
@@ -262,6 +271,20 @@ class Client
         }
 
         return $this->import;
+    }
+
+    /**
+     * Helper function that initializes the embed API class
+     *
+     * @return Import
+     */
+    private function getEmbed()
+    {
+        if (!$this->embed) {
+            $this->embed = new Embed($this);
+        }
+
+        return $this->embed;
     }
 
     /**
