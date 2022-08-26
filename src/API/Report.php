@@ -14,6 +14,8 @@ class Report
     const PAGES_URL = 'https://api.powerbi.com/v1.0/myorg/reports/%s/pages';
     const PAGES_IN_GROUP_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/pages';
     const GROUP_REPORT_EMBED_URL = "https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/GenerateToken";
+    const EXPORT_TO_FILE_URL = 'https://api.powerbi.com/v1.0/myorg/reports/%s/ExportTo';
+    const EXPORT_TO_FILE_IN_GROUP_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/ExportTo';
 
     /**
      * @var Client
@@ -93,6 +95,21 @@ class Report
     }
 
     /**
+     * @param string $reportId The report ID of the report
+     * @param string|null $groupId The group ID of the report
+     * @param array $body
+     * @return Response
+     */
+    public function exportToFile($reportId, $groupId, array $body)
+    {
+        $url = $this->getExportToFileUrl($reportId, $groupId);
+
+        $response = $this->client->request(Client::METHOD_POST, $url, $body);
+
+        return $this->client->generateResponse($response);
+    }
+
+    /**
      * @param string|null $groupId An optional group ID
      *
      * @return string
@@ -133,5 +150,20 @@ class Report
         }
 
         return sprintf(self::PAGES_URL, $reportId);
+    }
+
+    /**
+     * @param string      $reportId id from report
+     * @param string|null $groupId  An optional group ID
+     *
+     * @return string
+     */
+    private function getExportToFileUrl($reportId, $groupId)
+    {
+        if ($groupId) {
+            return sprintf(self::EXPORT_TO_FILE_IN_GROUP_URL, $groupId, $reportId);
+        }
+
+        return sprintf(self::EXPORT_TO_FILE_URL, $reportId);
     }
 }
