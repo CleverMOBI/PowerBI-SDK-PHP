@@ -119,7 +119,7 @@ class Report
      * @param string|null $groupId The group ID of the report
      * @return Response
      */
-    public function exportToFileStatus($reportId, $exportId, $groupId = null)
+    public function getExportToFileStatus($reportId, $exportId, $groupId = null)
     {
         $url = $this->getExportToFileStatusUrl($reportId, $exportId, $groupId);
 
@@ -134,11 +134,11 @@ class Report
      * @param string|null $groupId The group ID of the report
      * @return Response
      */
-    public function getFileOfExportToFile($reportId, $exportId, $groupId = null)
+    public function getFileOfExportToFile($reportId, $exportId, $file, $groupId = null)
     {
         $url = $this->getFileOfExportToFileUrl($reportId, $exportId, $groupId);
 
-        $response = $this->client->request(Client::METHOD_GET, $url);
+        $response = $this->client->requestFile(Client::METHOD_GET, $url, $file);
 
         return $this->client->generateResponse($response);
     }

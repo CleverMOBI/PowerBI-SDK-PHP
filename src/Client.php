@@ -316,6 +316,32 @@ class Client
     }
 
     /**
+     * Executes a HTTP request using the Guzzle HTTP client
+     *
+     * @param string     $method The HTTP method to use for the request.
+     * @param string     $url    The URL to make the request to.
+     * @param string|resource $file   File path or resource.
+     *
+     * @return mixed|\Psr\Http\Message\ResponseInterface
+     */
+    public function requestFile($method, $url, $file)
+    {
+        $requestOptions = [
+            'headers' => [
+                "Accept"        => "application/json",
+                "Authorization" => sprintf("Bearer %s", $this->getToken()),
+                "Content-Type"  => "application/json",
+            ]
+        ];
+
+        $requestOptions = array_merge($requestOptions, [
+            'sink' => $file,
+        ]);
+
+        return $this->httpClient->request($method, $url, $requestOptions);
+    }
+
+    /**
      * Generate a standard response from the PSR7 response interface
      *
      * @param \GuzzleHttp\Psr7\Response $response
