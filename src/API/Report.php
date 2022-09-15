@@ -16,6 +16,10 @@ class Report
     const GROUP_REPORT_EMBED_URL = "https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/GenerateToken";
     const EXPORT_TO_FILE_URL = 'https://api.powerbi.com/v1.0/myorg/reports/%s/ExportTo';
     const EXPORT_TO_FILE_IN_GROUP_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/ExportTo';
+    const EXPORT_TO_FILE_STATUS_URL = 'https://api.powerbi.com/v1.0/myorg/reports/%s/exports/%s';
+    const EXPORT_TO_FILE_STATUS_IN_GROUP_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/exports/%s';
+    const FILE_OF_EXPORT_TO_FILE_URL = 'https://api.powerbi.com/v1.0/myorg/reports/%s/exports/%s/file';
+    const FILE_OF_EXPORT_TO_FILE_IN_GROUP_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/exports/%s/file';
 
     /**
      * @var Client
@@ -76,12 +80,12 @@ class Report
 
     /**
      * @param string      $reportId    The report ID of the report
-     * @param string      $groupId     The group ID of the report
-     * @param null|string $accessLevel The access level used for the report
+     * @param string|null $groupId     The group ID of the report
+     * @param string|null $accessLevel The access level used for the report
      *
      * @return Response
      */
-    public function getReportEmbedToken($reportId, $groupId, $accessLevel = 'view')
+    public function getReportEmbedToken($reportId, $groupId = null, $accessLevel = 'view')
     {
         $url = sprintf(self::GROUP_REPORT_EMBED_URL, $groupId, $reportId);
 
@@ -96,11 +100,11 @@ class Report
 
     /**
      * @param string $reportId The report ID of the report
-     * @param string|null $groupId The group ID of the report
      * @param array $body
+     * @param string|null $groupId The group ID of the report
      * @return Response
      */
-    public function exportToFile($reportId, $groupId, array $body)
+    public function exportToFile($reportId, array $body, $groupId = null)
     {
         $url = $this->getExportToFileUrl($reportId, $groupId);
 
@@ -110,13 +114,43 @@ class Report
     }
 
     /**
+     * @param string $reportId The report ID of the report
+     * @param string $exportId The export job ID of the report
+     * @param string|null $groupId The group ID of the report
+     * @return Response
+     */
+    public function exportToFileStatus($reportId, $exportId, $groupId = null)
+    {
+        $url = $this->getExportToFileStatusUrl($reportId, $exportId, $groupId);
+
+        $response = $this->client->request(Client::METHOD_GET, $url);
+
+        return $this->client->generateResponse($response);
+    }
+
+    /**
+     * @param string $reportId The report ID of the report
+     * @param string $exportId The export job ID of the report
+     * @param string|null $groupId The group ID of the report
+     * @return Response
+     */
+    public function getFileOfExportToFile($reportId, $exportId, $groupId = null)
+    {
+        $url = $this->getFileOfExportToFileUrl($reportId, $exportId, $groupId);
+
+        $response = $this->client->request(Client::METHOD_GET, $url);
+
+        return $this->client->generateResponse($response);
+    }
+
+    /**
      * @param string|null $groupId An optional group ID
      *
      * @return string
      */
-    private function getReportsUrl($groupId)
+    private function getReportsUrl($groupId = null)
     {
-        if ($groupId) {
+        if (null !== $groupId) {
             return sprintf(self::REPORTS_IN_GROUP_URL, $groupId);
         }
 
@@ -130,7 +164,7 @@ class Report
      */
     private function getReportUrl($reportId, $groupId = null)
     {
-        if ($groupId) {
+        if (null !== $groupId) {
             return sprintf(self::REPORT_IN_GROUP_URL, $groupId, $reportId);
         }
 
@@ -143,9 +177,9 @@ class Report
      *
      * @return string
      */
-    private function getPagesUrl($reportId, $groupId)
+    private function getPagesUrl($reportId, $groupId = null)
     {
-        if ($groupId) {
+        if (null !== $groupId) {
             return sprintf(self::PAGES_IN_GROUP_URL, $groupId, $reportId);
         }
 
@@ -160,10 +194,28 @@ class Report
      */
     private function getExportToFileUrl($reportId, $groupId)
     {
-        if ($groupId) {
+        if (null !== $groupId) {
             return sprintf(self::EXPORT_TO_FILE_IN_GROUP_URL, $groupId, $reportId);
         }
 
         return sprintf(self::EXPORT_TO_FILE_URL, $reportId);
+    }
+
+    private function getExportToFileStatusUrl($reportId, $exportId, $groupId = null)
+    {
+        if (null !== $groupId) {
+            return sprintf(self::EXPORT_TO_FILE_STATUS_IN_GROUP_URL, $groupId, $reportId, $exportId);
+        }
+
+        return sprintf(self::EXPORT_TO_FILE_STATUS_URL, $reportId, $exportId);
+    }
+
+    private function getFileOfExportToFileUrl($reportId, $exportId, $groupId = null)
+    {
+        if (null !== $groupId) {
+            return sprintf(self::FILE_OF_EXPORT_TO_FILE_IN_GROUP_URL, $groupId, $reportId, $exportId);
+        }
+
+        return sprintf(self::FILE_OF_EXPORT_TO_FILE_URL, $reportId, $exportId);
     }
 }
