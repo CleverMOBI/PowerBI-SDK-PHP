@@ -54,6 +54,26 @@ class Dataset
      *
      * @param string      $datasetId An dataset ID
      * @param string|null $groupId   An optional group ID
+     * @param int|null    $top       The requested number of entries in the refresh history. If not provided, the default is the last available 60 entries.
+     *
+     * @return Response
+     */
+    public function getRefreshHistory($datasetId, $groupId = null, ?int $top = null)
+    {
+        $url = $this->getRefreshUrl($groupId, $datasetId);
+        if ($top) {
+            $url .= '?$top='.$top;
+        }
+        $response = $this->client->request(Client::METHOD_GET, $url);
+
+        return $this->client->generateResponse($response);
+    }
+
+    /**
+     * Refresh the dataset from the PowerBI API
+     *
+     * @param string      $datasetId An dataset ID
+     * @param string|null $groupId   An optional group ID
      * @param bool|null   $notify    set if user recibe notify mail
      *
      * @return Response
