@@ -15,6 +15,8 @@ class Dataset
     const GROUP_DATASET_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/datasets';
     const REFRESH_DATASET_URL = 'https://api.powerbi.com/v1.0/myorg/datasets/%s/refreshes';
     const GROUP_REFRESH_DATASET_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/datasets/%s/refreshes';
+    const REFRESH_EXECUTION_DATASET_URL = 'https://api.powerbi.com/v1.0/myorg/datasets/%s/refreshes/%s';
+    const GROUP_REFRESH_EXECUTION_DATASET_URL = 'https://api.powerbi.com/v1.0/myorg/groups/%s/datasets/%s/refreshes/%s';
 
     /**
      * The SDK client
@@ -50,7 +52,7 @@ class Dataset
     }
 
     /**
-     * Refresh the dataset from the PowerBI API
+     * Get refresh history of the dataset from the PowerBI API
      *
      * @param string      $datasetId An dataset ID
      * @param string|null $groupId   An optional group ID
@@ -68,6 +70,25 @@ class Dataset
 
         return $this->client->generateResponse($response);
     }
+
+    /**
+     * Get refresh execution of the dataset from the PowerBI API
+     *
+     * @param string      $datasetId An dataset ID
+     * @param string      $refreshId A refresh ID (for example, from getRefreshHistory)
+     * @param string|null $groupId   An optional group ID
+     *
+     * @return Response
+     */
+    public function getRefreshExecution($datasetId, $refreshId, $groupId = null)
+    {
+        $url = $this->getRefreshExecutionUrl($groupId, $datasetId, $refreshId);
+        $response = $this->client->request(Client::METHOD_GET, $url);
+
+        return $this->client->generateResponse($response);
+    }
+
+
 
     /**
      * Refresh the dataset from the PowerBI API
@@ -139,4 +160,14 @@ class Dataset
 
         return sprintf(self::REFRESH_DATASET_URL, $datasetId);
     }
+
+    private function getRefreshExecutionUrl($groupId, $datasetId, $refreshId)
+    {
+        if ($groupId) {
+            return sprintf(self::GROUP_REFRESH_EXECUTION_DATASET_URL, $groupId, $datasetId, $refreshId);
+        }
+
+        return sprintf(self::REFRESH_EXECUTION_DATASET_URL, $datasetId, $refreshId);
+    }
+
 }
